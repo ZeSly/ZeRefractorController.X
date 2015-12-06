@@ -249,7 +249,7 @@ void stepper_init(void)
     p_step_sequencer = full_step_sequencer;
     nb_step_seq = 4;
 
-    INTCON2bits.TMR0IP = 0;     // set timer0 interrupr low priority
+    INTCON2bits.TMR0IP = 1;     // set timer0 interrupr low priority
     T0CON = 0x04;               // 16 bit Timer0, 1:32 prescale
     timer.lt = timer_period;
     TMR0H = timer.bt[1];        // set Timer0 to timer_period
