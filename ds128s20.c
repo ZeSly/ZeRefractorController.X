@@ -20,7 +20,6 @@
 #define __DS128S20_C
 
 #include <stdio.h>
-#include <delays.h>
 
 #include "hid_focus.h"
 
@@ -190,15 +189,28 @@ void read_temperature(unsigned char n)
         temperature[n] = OW_buffer[1];
         temperature[n] = temperature[n] << 8;
         temperature[n] |= OW_buffer[0];
-        temperature[n] >>= 1;
-        temperature[n] *= 100;
+        if (ds18s20_sn[n][0] == 0x10) // DS18S20
+        {
 
-        count_per_c = (int) OW_buffer[COUNT_PER_C] * 100;
-        count_remain = (int) OW_buffer[COUNT_REMAIN] * 100;
-    //    IdxToSendDataBuffer = sprintf((char *)ToSendDataBuffer,(const farchar *)"temp=%d\r\ncnt_per_c=%d\r\ncnt_remain=%d\r\n", temperature[n], count_per_c, count_remain);
+            temperature[n] >>= 1;
+            temperature[n] *= 100;
 
-        temperature[n] = temperature[n] - 25 + (count_per_c - count_remain) / (int) OW_buffer[COUNT_PER_C];
-        temperature[n] /= 10;
+            count_per_c = (int) OW_buffer[COUNT_PER_C] * 100;
+            count_remain = (int) OW_buffer[COUNT_REMAIN] * 100;
+            //    IdxToSendDataBuffer = sprintf((char *)ToSendDataBuffer,(const farchar *)"temp=%d\r\ncnt_per_c=%d\r\ncnt_remain=%d\r\n", temperature[n], count_per_c, count_remain);
+
+            temperature[n] = temperature[n] - 25 + (count_per_c - count_remain) / (int) OW_buffer[COUNT_PER_C];
+            temperature[n] /= 10;
+        }
+        else // DS18B20
+        {
+            count_remain = temperature[n] & 0xF;
+            count_remain *= 10;
+            count_remain /= 10;
+            temperature[n] >>= 4;
+            temperature[n] *= 10;
+            temperature[n] += count_remain;
+        }
     }
 }
 

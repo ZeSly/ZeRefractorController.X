@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "system.h"
-#include <delays.h>
+//#include <delays.h>
 #include "hid_focus.h"
 #include "positionning.h"
 #include "temperature.h"

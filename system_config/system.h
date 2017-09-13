@@ -39,6 +39,12 @@
 #define HIGH    1
 #define LOW     0
 
+#define TRUE 1
+#define FALSE 0 
+
+#define SET 1
+#define CLEAR 0
+
 #define _XTAL_FREQ 48000000
 
 #define self_power 1

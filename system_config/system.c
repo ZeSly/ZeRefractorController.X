@@ -28,6 +28,7 @@
 #include <ds128s20.h>
 #include <stepper.h>
 #include <messages.h>
+#include <eep.h>
 
 /** CONFIGURATION Bits **********************************************/
 #pragma config PLLDIV   = 5         // (20 MHz crystal on PICDEM FS USB board)
