@@ -6,11 +6,11 @@
  * FileName:        setup.h
  * Dependencies:
  * Processor:       PIC18F2525
- * Complier:        MCC18 v3.37
+ * Complier:        XC8 v1.45
  *
  * Software License Agreement
  *
- * Copyright © 2011 Sylvain Girard
+ * Copyright © 2011-2019 Sylvain Girard
  *
  * Author               Date        Comment
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

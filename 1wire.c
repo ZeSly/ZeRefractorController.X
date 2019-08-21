@@ -6,7 +6,7 @@
  * FileName:        1wire.c
  * Dependencies:
  * Processor:       PIC18
- * Complier:        MCC18 v3.13
+ * Complier:        XC18 v1.45
  * Company:         Microchip Technology, Inc.
  *
  * Software License Agreement

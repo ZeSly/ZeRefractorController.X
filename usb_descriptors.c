@@ -8,8 +8,8 @@
                                 Explorer 16 + PIC24 USB PIM.  The firmware may be
                                 modified for use on other USB platforms by editing the
                                 HardwareProfile.h file.
- Complier:  	Microchip C18 (for PIC18) or C30 (for PIC24)
- Company:		Microchip Technology, Inc.
+ Complier:      XC18 v1.45
+ Company:	Microchip Technology, Inc.
 
  Software License Agreement:
 

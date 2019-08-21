@@ -6,11 +6,11 @@
  * FileName:        messages.h
  * Dependencies:
  * Processor:       PIC18F2550
- * Complier:        MCC18 v3.40
+ * Complier:        XC8 v1.45
  *
  * Software License Agreement
  *
- * Copyright © 2012 Sylvain Girard
+ * Copyright © 2012-2019 Sylvain Girard
  *
  * Author               Date        Comment
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

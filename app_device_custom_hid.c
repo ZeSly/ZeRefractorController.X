@@ -44,7 +44,7 @@
         unsigned char ToSendDataBuffer[64];
         #pragma udata
 
-    #else defined(__XC8)
+    #elif defined(__XC8)
         unsigned char ReceivedDataBuffer[64] @ HID_CUSTOM_OUT_DATA_BUFFER_ADDRESS;
         unsigned char ToSendDataBuffer[64] @ HID_CUSTOM_IN_DATA_BUFFER_ADDRESS;
     #endif
