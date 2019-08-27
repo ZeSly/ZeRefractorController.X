@@ -71,6 +71,7 @@
 #pragma config EBTRB    = OFF
 
 u_config config_byte;
+char unsigned nb_devices;
 
 /*********************************************************************
  * Function: void SYSTEM_Initialize( SYSTEM_STATE state )
@@ -87,7 +88,7 @@ u_config config_byte;
 
 void SYSTEM_Initialize( SYSTEM_STATE state )
 {
-    char nb_devices = 0;
+    nb_devices = 0;
     
     config_byte.byte = 0;
 

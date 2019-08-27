@@ -73,6 +73,7 @@ typedef union
 
 //#ifndef MAIN_C
 extern u_config config_byte;
+extern unsigned char nb_devices;
 //#endif
 
 

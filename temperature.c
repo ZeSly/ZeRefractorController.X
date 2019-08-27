@@ -71,6 +71,11 @@ void send_temperature(int temperature)
     }
 }*/
 
+void cmd_ftn()
+{
+    answer(nb_devices);
+}
+
 /**********************************************************************
 * Function:        void cmd_ftr(void)
 * PreCondition:    None
@@ -81,7 +86,8 @@ void send_temperature(int temperature)
 ***********************************************************************/
 void cmd_ftxr(unsigned char sensor)
 {
-    answer(temperature[sensor]);
+    int t = temperature[sensor];
+    answer(t);
 }
 
 void cmd_ftr(void)
@@ -91,7 +97,10 @@ void cmd_ftr(void)
 
 void cmd_ft2r(void)
 {
-    cmd_ftxr(1);
+    unsigned int num_sensor;
+
+    read_number(&num_sensor, 1);
+    cmd_ftxr(num_sensor);
 }
 
 /**********************************************************************
@@ -116,7 +125,10 @@ void cmd_ftm(void)
 
 void cmd_ft2m(void)
 {
-    cmd_ftxm(1);
+    unsigned int num_sensor;
+
+    read_number(&num_sensor, 1);
+    cmd_ftxm(num_sensor);
 }
 
 /**********************************************************************

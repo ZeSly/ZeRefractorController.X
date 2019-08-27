@@ -20,6 +20,7 @@
 #define __DS128S20_C
 
 #include <stdio.h>
+#include <string.h>
 
 #include "hid_focus.h"
 
@@ -27,12 +28,14 @@
 #include "ds128s20.h"
 #include "1wire.h"
 
+#define MAX_DS18B20 8
+
 extern unsigned char ToSendDataBuffer[];
 
-static unsigned char nb_device = 0;
+int temperature[MAX_DS18B20];
 
 // Serial numbers
-static unsigned char ds18s20_sn[2][8];
+static unsigned char ds18s20_sn[MAX_DS18B20][8];
 
 /**********************************************************************
  * Function:        void init_one_ds18s20 (void)
@@ -52,7 +55,7 @@ unsigned char init_one_ds18s20(void)
         for (i = 0; i < 8; i++)
             ds18s20_sn[0][i] = OW_read_byte(); // Read 64-bit registration (48-bit serial number) number from 1-wire Slave Device
 
-        nb_device = 1;
+        //nb_device = 1;
         return 1;
     }
     return 0;
@@ -63,45 +66,94 @@ unsigned char init_one_ds18s20(void)
  * PreCondition:    None
  * Input:		   None
  * Output:		   None
- * Overview:		   Check for DS18S20 devices on the 1-wire bus
+ * Overview:		   Check for DS18S20 devices on the 1-wire bus 
  ***********************************************************************/
+/*
+ device 1: xxx10101100
+device 2: xxx01010101
+device 3: xxx10101111
+device 4: xxx10001000
+ 
+                    0 p0=0 c=1
+device 4: xxx10001000
+device 1: xxx10101100 
+                  0   p2=0 c=2
+device 4: xxx10001000
+
+                    0 c!=1
+device 4: xxx10001000
+device 1: xxx10101100 
+                  1   c==2 p2=1 c=1
+device 1: xxx10101100 
+
+                    1 c==1 p0=1 c=0
+device 2: xxx01010101
+device 3: xxx10101111
+                   0  p1=0 c=1
+device 2: xxx01010101
+
+                    1 p0==1 c=1
+device 2: xxx01010101
+device 3: xxx10101111
+                   1  c==1 p1=1 c=0
+device 3: xxx10101111
+*/
 unsigned char init_ds18s20(void)
 {
     unsigned char i, j;
-    unsigned char ci, cj;
+    unsigned char p[64];
+    unsigned char c = 0;
     unsigned char two_bit;
     unsigned char n;
+    unsigned char nb_device = 0;
 
-    ci = cj = 255;
+    for (n = 0; n < MAX_DS18B20; n++)
+        temperature[n] = -30000;
+    
+    memset(p, 255, 64);
     if (!OW_reset_pulse())
     { // Is slave present
         nb_device++;
-        for (n = 0; n < 2; n++)
+        for (n = 0; n < MAX_DS18B20; n++)
         {
             OW_write_byte(0xF0); // Send a search ROM command
 
             for (i = 0; i < 8; i++)
             {
                 ds18s20_sn[n][i] = 0;
+
                 for (j = 0; j < 8; j++)
                 {
+                    unsigned char pos = i * 8 + j;
+
                     two_bit = OW_read_bit() << 1;
                     two_bit |= OW_read_bit();
                     if (two_bit != 0)
                     {
                         two_bit >>= 1;
                     }
-                    else if (i == cj && j == cj)
-                    { // known conflict on current bit, select bit 0
-                        ci = cj = 255;
+                    else if (p[pos] == 255)
+                    { // unknown conflict on current bit, select bit 0
+                        p[pos] = two_bit = 0;
+                        c = pos;
                         two_bit = 0;
+                        nb_device++;
+                    }
+                    else if (p[pos] == 0 && c == pos)
+                    { // known conflict on current bit, select bit 1
+                        p[pos] = two_bit = 1;
+                        // go to next conflict
+                        do
+                        {
+                            c--;
+                        } while (p[c] != 0 && c != 0);
+                        // reset all conflict at higher position
+                        for (int r = pos + 1; r < 64; r++)
+                            p[r] = 255;
                     }
                     else
-                    { // unknown conflict on current bit, select bit 1
-                        ci = i;
-                        cj = j;
-                        two_bit = 1;
-                        nb_device++;
+                    { // solved conflict, select saved bit
+                        two_bit = p[pos];
                     }
                     OW_write_bit(two_bit);
                     ds18s20_sn[n][i] >>= 1;
@@ -112,7 +164,6 @@ unsigned char init_ds18s20(void)
             OW_reset_pulse();
         }
     }
-    if (nb_device > 2) nb_device = 2;
     return nb_device;
 }
 
@@ -127,17 +178,17 @@ void print_sn()
 {
     unsigned char n, i;
 
-    put_char(nb_device + '0');
-    put_rom_string((const char *) " dev\r\n");
-    for (n = 0; n < nb_device; n++)
+    put_char(nb_devices + '0');
+    put_char('\n');
+    for (n = 0; n < nb_devices; n++)
     {
         for (i = 0; i < 8; i++)
         {
             hex_ascii(ds18s20_sn[n][i]);
         }
-        put_char('\r');
         put_char('\n');
     }
+    put_char(0);
 }
 
 /**********************************************************************
@@ -167,9 +218,6 @@ void select_ds18s20(unsigned char n)
  * Overview:
  ***********************************************************************/
 unsigned char is_measuring = 0;
-int temperature[2] = {-30000, -30000};
-
-//extern unsigned char IdxToSendDataBuffer;
 
 void read_temperature(unsigned char n)
 {

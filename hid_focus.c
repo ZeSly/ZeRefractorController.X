@@ -70,6 +70,7 @@ static hid_command hid_command_tab[] =
     print_sn,
 
     /* Temperature commands */
+    cmd_ftn,        // read sensor number 
     cmd_ftm,        // Measure temperature sensor 1
     cmd_ft2m,       // Measure temperature sensor 2
     cmd_ftr,        // Read temperature sensor 1
@@ -263,23 +264,19 @@ unsigned char read_number(unsigned int *val, unsigned char lg)
 void hex_ascii(unsigned char display_data)
 {
     unsigned char temp, i;
-    char str[8];
 
     i = 0;
     temp = ((display_data & 0xF0)>>4);
     if (temp <= 0x09)
-            str[i++] = temp + '0';
+            put_char(temp + '0');
     else
-            str[i++] = temp + 'A' - 10;
+            put_char(temp + 'A' - 10);
 
     temp = display_data & 0x0F;
     if (temp <= 0x09)
-            str[i++] = temp + '0';
+            put_char(temp + '0');
     else
-            str[i++] = temp + 'A' - 10;
-
-    str[i++] = 0;
-    put_string(str);
+            put_char(temp + 'A' - 10);
 }
 
 /**********************************************************************

@@ -23,6 +23,7 @@
 //******* P R O T O T Y P E S ***********************************************************/
 void put_str_ftr(unsigned char sensor);
 void send_temperature(int temperature);
+void cmd_ftn();
 void cmd_ftm(void);
 void cmd_ft2m(void);
 void cmd_ftr(void);
